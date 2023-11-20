@@ -21,7 +21,32 @@ export default function useAuthHook(){
 
                 if(response && response.data && response.data.data !== null){
                     showMessage('Login Success', 'success');
-                    return login(response.data.data.token, response.data.data.role);
+                    const { token, role, fullName } = response.data.data;
+                    return login(token, role, fullName);
+                }
+            }
+        }catch(error : any){
+            console.log(error.message);
+        }
+    }
+
+    const registerHook = async (firstName: string, lastName: string, email: string, password: string, phoneNumber: string) => {
+        try{
+            if(axiosInstance){
+                const response = await axiosInstance.post('/auth/register', {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    password: password,
+                    role: 'Agent',
+                    phoneNumber: phoneNumber
+                });
+
+                if(response && response.data && response.data.data !== null){
+                    showMessage('Register Success', 'success');
+                    navigate('/');
+
+                    return true;
                 }
             }
         }catch(error : any){
@@ -41,5 +66,5 @@ export default function useAuthHook(){
         }, 2000);
     }
 
-    return {loginHook, logoutHook};
+    return {loginHook, logoutHook, registerHook};
 }

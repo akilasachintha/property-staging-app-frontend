@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { AiOutlineCheckCircle, AiOutlineInfoCircle, AiOutlineWarning, AiOutlineCloseCircle, AiOutlineClose } from 'react-icons/ai';
 
 export type ToastContextType = {
     message: string;
@@ -31,13 +32,47 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         console.log(newMessage);
     };
 
+    const getIcon = (type: 'error' | 'success' | 'warning' | 'info') => {
+        switch(type) {
+            case 'success':
+                return <AiOutlineCheckCircle />;
+            case 'error':
+                return <AiOutlineCloseCircle />;
+            case 'warning':
+                return <AiOutlineWarning />;
+            case 'info':
+                return <AiOutlineInfoCircle />;
+            default:
+                return null;
+        }
+    };
+
+    const closeToast = () => {
+        setMessage('');
+    };
+
     return (
         <ToastContext.Provider value={{ message, type, showMessage }}>
             {children}
             {message && (
-                <div className={`fixed top-0 left-0 w-full px-10 py-3 text-white text-center ${type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-green-600' : type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'}`}>
-                    {message}
+                <div style={{
+                    zIndex: 9999,
+                    position: 'fixed',
+                    top: '8px',
+                    left: '8px',
+                    right: '8px',
+                }}
+                     className={`rounded flex px-2 py-2 text-white justify-center text-center transition-all duration-500 ease-in-out ${message ? 'opacity-100' : 'opacity-0'} ${type === 'error' ? 'bg-red-600' : type === 'success' ? 'bg-primaryGold' : type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'}`}
+                >
+                    <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center">
+                            {getIcon(type)}
+                            <span className="ml-2">{message}</span>
+                        </div>
+                        <AiOutlineClose onClick={closeToast} className="cursor-pointer" />
+                    </div>
                 </div>
+
             )}
         </ToastContext.Provider>
     );

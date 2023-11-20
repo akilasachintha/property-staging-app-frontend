@@ -12,11 +12,11 @@ const formFields = [
 
 const ForgotPasswordPage: React.FC = () => {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 sm:px-6">
-            <div className="max-w-6xl w-full space-y-8 lg:w-full lg:grid lg:grid-cols-2 rounded-xl shadow-lg bg-white h-[600px]">
+        <div className="min-h-screen flex items-center justify-center bg-primaryBlack px-4 sm:px-6">
+            <div className="max-w-6xl w-full lg:w-full lg:grid lg:grid-cols-2 shadow-lg bg-primaryGold h-[600px] rounded">
                 <div className="px-8 md:px-20 py-8 flex flex-col justify-center">
                     <img src={LogoImage} alt="Logo" className="mx-auto h-32 w-auto" />
-                    <h2 className="text-center text-3xl font-extrabold text-gray-900 lg:text-left">
+                    <h2 className="text-center text-3xl font-extrabold text-primaryBlack">
                         Reset your password
                     </h2>
                     <Formik
@@ -36,20 +36,20 @@ const ForgotPasswordPage: React.FC = () => {
                                 ))}
                             </div>
                             <div>
-                                <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-700">
+                                <button type="submit" className="group relative rounded w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium text-white bg-primaryBlack hover:bg-gray-700">
                                     Reset password
                                 </button>
                             </div>
                         </Form>
                     </Formik>
                     <div className="mt-6">
-                        <Link to="/" className="text-sm text-gray-600 hover:text-gray-500">
+                        <Link to="/" className="text-sm text-primaryBlack hover:text-gray-500">
                             Remember your password? Sign in
                         </Link>
                     </div>
                 </div>
                 <div className="hidden lg:block relative w-full">
-                    <img className="absolute inset-0 h-full w-full object-cover rounded-r-lg" src={LoginImage} alt="" />
+                    <img className="absolute inset-0 h-full w-full object-cover rounded" src={LoginImage} alt="" />
                 </div>
             </div>
         </div>
