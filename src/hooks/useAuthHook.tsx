@@ -43,7 +43,7 @@ export default function useAuthHook(){
                 });
 
                 if(response && response.data && response.data.data !== null){
-                    showMessage('Register Success', 'success');
+                    showMessage('Registration successful. Please check your email to confirm your identity.', 'success');
                     navigate('/');
 
                     return true;
@@ -66,5 +66,74 @@ export default function useAuthHook(){
         }, 2000);
     }
 
-    return {loginHook, logoutHook, registerHook};
+    const confirmEmailHook = async (id: string | undefined, token: string | undefined) => {
+        try {
+            if(axiosInstance){
+                const query = `?id=${id}&token=${token}`;
+                const response = await axiosInstance.get(`/auth/confirm${query}`);
+
+                if(response && response.data && response.data.data !== null){
+                    showMessage('Email confirmed successfully.', 'success');
+                    return true;
+                }
+
+                if(response && response.data && response.data.error !== null){
+                    return false;
+                }
+            }
+        } catch (error: any) {
+            showMessage('Email confirmation failed.', 'error');
+            return false;
+        }
+    }
+
+    const forgotPasswordHook = async (email: string) => {
+        try {
+            if(axiosInstance){
+                const response = await axiosInstance.post('/auth/forgot', {
+                    email: email
+                });
+
+                if(response && response.data && response.data.data !== null){
+                    showMessage('Reset password email sent.', 'success');
+                    return true;
+                }
+
+                if(response && response.data && response.data.error !== null){
+                    return false;
+                }
+            }
+        } catch (error: any) {
+            showMessage('Reset password email failed.', 'error');
+            return false;
+        }
+    }
+
+    const resetPasswordHook = async (id: string | undefined, token: string | undefined, password: string) => {
+        try {
+            if(axiosInstance){
+                const response = await axiosInstance.post(`/auth/reset`, {
+                    id: id,
+                    token: token,
+                    password: password
+                });
+
+                if(response && response.data && response.data.data !== null){
+                    showMessage('Password reset successfully.', 'success');
+                    navigate('/');
+                    return true;
+                }
+
+                if(response && response.data && response.data.error !== null){
+                    return false;
+                }
+            }
+        } catch (error: any) {
+            showMessage('Password reset failed.', 'error');
+            return false;
+        }
+    }
+
+
+    return {loginHook, logoutHook, registerHook, confirmEmailHook, forgotPasswordHook, resetPasswordHook};
 }

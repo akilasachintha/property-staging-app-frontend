@@ -2,7 +2,6 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
-import LoginImage from 'assets/login-image.jpg';
 import FormField from 'components/FormField';
 import useAuthHook from "hooks/useAuthHook";
 import {useLoadingContext} from "context/LoadingContext";
@@ -10,7 +9,7 @@ import Logo from "components/Logo";
 
 const formFields = [
     { label: 'Email address', name: 'email', type: 'email' },
-    { label: 'Phone No', name: 'phone', type: 'text' },
+    { label: 'Phone No', name: 'phone', type: 'number' },
 ];
 
 const initialValues = {
@@ -19,16 +18,20 @@ const initialValues = {
     phone: '',
     password: '',
     confirmPassword: '',
-    email: ''
+    email: '',
+    bankAccountNumber: '',
+    bsb: '',
 }
 
 const validationSchema = Yup.object({
     firstName: Yup.string().required('Required'),
     lastName: Yup.string().required('Required'),
-    phone: Yup.string().required('Required'),
+    phone: Yup.number().required('Required'),
     password: Yup.string().min(5, 'Must be 8 characters or more').required('Required'),
     confirmPassword: Yup.string().oneOf([Yup.ref('password'), undefined], 'Passwords must match').required('Required'),
     email: Yup.string().email('Invalid email address').required('Required'),
+    bankAccountNumber: Yup.number().required('Required'),
+    bsb: Yup.string().required('Required'),
 });
 
 const RegisterPage: React.FC = () => {
@@ -46,9 +49,9 @@ const RegisterPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-primaryBlack px-4 sm:px-6">
-            <div className="max-w-6xl w-full lg:w-full lg:grid lg:grid-cols-2 shadow-lg bg-primaryGold h-[600px] rounded">
-                <div className="px-20 py-8 flex flex-col justify-center">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-primaryGold to-yellow-700 px-4 sm:px-6">
+            <div className="max-w-6xl w-full lg:w-full lg:grid lg:grid-cols-2 shadow-lg bg-white h-[600px] rounded">
+                <div className="px-10 md:px-20 py-8 flex flex-col justify-center">
                     <Logo />
                     <h2 className="text-center text-3xl font-extrabold text-primaryBlack">
                         Create your account
@@ -72,8 +75,12 @@ const RegisterPage: React.FC = () => {
                                 <FormField label="Password" name="password" type="password" />
                                 <FormField label="Confirm password" name="confirmPassword" type="password" />
                             </div>
+                            <div className="flex justify-between">
+                                <FormField label="Bank Account Number" name="bankAccountNumber" type="number" />
+                                <FormField label="BSB" name="bsb" type="text" />
+                            </div>
                             <div>
-                                <button type="submit" className="group relative rounded w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium text-white bg-primaryBlack hover:bg-gray-900">
+                                <button type="submit" className="group relative rounded w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium text-white bg-primaryBlack hover:bg-gray-800">
                                     Register
                                 </button>
                             </div>
@@ -86,7 +93,12 @@ const RegisterPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="hidden lg:block relative w-full">
-                    <img className="absolute inset-0 h-full w-full object-cover rounded" src={LoginImage} alt="" />
+                    <div className="absolute inset-0 bg-black opacity-20"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white">
+                        <h2 className="text-4xl font-bold">Welcome!</h2>
+                        <p className="mt-2 text-lg">We're glad to have you back. Please sign in to continue.</p>
+                    </div>
+                    <img className="h-[600px] w-full object-cover rounded" src="https://images.pexels.com/photos/2883049/pexels-photo-2883049.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="" />
                 </div>
             </div>
         </div>

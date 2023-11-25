@@ -28,6 +28,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [userRole, setUserRole] = useState<string | null>(null);
     const [userFullName, setUserFullName] = useState<string | null>(null);
 
+    useEffect(() => {
+
+    }, [isLoggedIn]);
+
     const login = (incomingToken: string, incomingUserRole: string, incomingUserFullName: string) => {
         setIsLoggedIn(true);
         setToken(incomingToken);
@@ -48,10 +52,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUserRole(null);
         setUserFullName(null);
 
-        localStorage.removeItem('token');
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('userFullName');
+        localStorage.setItem('token', '');
+        localStorage.setItem('isLoggedIn', 'false');
+        localStorage.setItem('userRole', '');
+        localStorage.setItem('userFullName', '');
     };
 
     useEffect(() => {
@@ -67,6 +71,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUserFullName(storedUserFullName);
         }
     }, []);
+
+    useEffect(() => {
+
+    }, [isLoggedIn]);
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, token, userRole, userFullName, login, logout }}>

@@ -5,6 +5,7 @@ import {LoadingProvider} from "./context/LoadingContext";
 import LoadingPage from "./pages/LoadingPage";
 import {ToastProvider} from "./context/ToastContext";
 import {AxiosProvider} from "./context/AxiosContext";
+import {DashboardProvider} from "./context/DashboardContext";
 
 export default function App() {
     return (
@@ -12,8 +13,10 @@ export default function App() {
             <AuthProvider>
                 <LoadingProvider>
                     <AxiosProvider>
-                        <AppRoutes />
-                        <LoadingPage />
+                        <DashboardProvider>
+                            <AppRoutes />
+                            <LoadingPage />
+                        </DashboardProvider>
                     </AxiosProvider>
                 </LoadingProvider>
             </AuthProvider>
