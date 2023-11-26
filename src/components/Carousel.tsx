@@ -40,7 +40,7 @@ function Carousel({ images}: ImagesInterface) {
             )}
             <div className="absolute bottom-0 left-0 w-full flex justify-center space-x-2 p-2 bg-gray-950 bg-opacity-50">
                 {images.map((image, index) => (
-                    <img key={index} src={image} alt="thumbnail" className={`h-12 rounded cursor-pointer ${currentImageIndex === index ? 'border-2 border-primaryGold' : ''}`} onClick={() => selectImage(index)} />
+                    <img key={index} src={image} alt="thumbnail" className={`h-12 w-20 rounded cursor-pointer ${currentImageIndex === index ? 'border-2 border-primaryGold' : ''}`} onClick={() => selectImage(index)} />
                 ))}
             </div>
         </div>

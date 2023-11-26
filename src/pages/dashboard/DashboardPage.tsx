@@ -21,7 +21,9 @@ export default function DashboardPage() {
 
     useEffect(() => {
         getEnquires && getEnquires().catch((error) => console.log(error.message));
-        getDashboardItems && getDashboardItems().catch((error) => console.log(error.message));
+        if(userRole === 'Admin'){
+            getDashboardItems && getDashboardItems().catch((error) => console.log(error.message));
+        }
     }, []);
 
     useEffect(() => {
