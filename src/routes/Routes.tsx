@@ -14,9 +14,10 @@ import ResetPasswordPage from "pages/ResetPasswordPage";
 import DashboardEnquiryDetailsPage from "../pages/dashboard/DashboardEnquiryDetailsPage";
 import DashboardEnquiryPage from "../pages/dashboard/DashboardEnquiryPage";
 import DashboardUsersPage from "../pages/dashboard/DashboardUsersPage";
+import DashboardAgentsPage from "../pages/dashboard/DashboardAgentsPage";
 
 export default function AppRoutes() {
-    const { isLoggedIn} = useAuthContext();
+    const { isLoggedIn, userRole} = useAuthContext();
 
     return (
         <Router>
@@ -29,6 +30,13 @@ export default function AppRoutes() {
                             <Route path="profile" element={<ProfilePage />} />
                             <Route path="enquiry" element={<DashboardEnquiryPage />} />
                             <Route path="enquiry/:id" element={<DashboardEnquiryDetailsPage />} />
+                            {
+                                userRole === 'Admin' && (
+                                    <>
+                                        <Route path="agents" element={<DashboardAgentsPage />} />
+                                    </>
+                                )
+                            }
                             <Route path="users" element={<DashboardUsersPage />} />
                         </Route>
                     </>

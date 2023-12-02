@@ -1,14 +1,13 @@
 import React, {ChangeEvent, FC, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {EnquiryType, useEnquiryContext} from '../context/EnquiryContext';
-import {FaPlus} from 'react-icons/fa';
 import {AiOutlineDelete, AiOutlineEdit, AiOutlineEye} from "react-icons/ai";
 
 type EnquiryListProps = {
     rowsCount: number;
 };
 
-const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
+const AgentsList: FC<EnquiryListProps> = ({rowsCount}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(rowsCount);
     const [searchTerm, setSearchTerm] = useState('');
@@ -16,7 +15,7 @@ const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
     const {enquiryList, onOpenDeleteModal} = useEnquiryContext();
     const {onOpenEnquiry, setSelectedEnquiry, getEnquiry, setIsEditEnquiry} = useEnquiryContext();
 
-    const enquiries =
+    const inquiries =
         enquiryList &&
         enquiryList.length > 0 &&
         enquiryList.map((enquiry: EnquiryType) => ({
@@ -56,9 +55,9 @@ const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
     };
 
     const currentItems =
-        enquiries &&
-        enquiries.length > 0 &&
-        enquiries.filter((inquiry: any) => {
+        inquiries &&
+        inquiries.length > 0 &&
+        inquiries.filter((inquiry: any) => {
             const clientNameMatch = inquiry.clientName.toLowerCase().includes(searchTerm);
             const propertyAddressMatch = inquiry.propertyAddress.toLowerCase().includes(searchTerm);
             const idMatch = inquiry.id.toLowerCase().includes(searchTerm);
@@ -68,7 +67,7 @@ const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
         }).slice(indexOfFirstItem, indexOfLastItem);
 
     const pageNumbers = [];
-    const totalItems = enquiries ? enquiries.length : 0;
+    const totalItems = inquiries ? inquiries.length : 0;
     for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
         pageNumbers.push(i);
     }
@@ -76,20 +75,15 @@ const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
     return (
         <div className="w-full overflow-x-auto bg-white rounded shadow-lg p-4">
             <div className="flex justify-between w-full items-center mb-2">
-                <h2 className="text-xl font-bold mb-2">Enquiries</h2>
-                <button onClick={onOpenEnquiry}
-                        className="justify-center bg-primaryGold text-primaryBlack py-2 px-4 rounded hover:bg-yellow-600 hover:text-primaryBlack transition-colors duration-200 flex items-center">
-                    Create Enquiry
-                    <FaPlus className="ml-3"/>
-                </button>
+                <h2 className="text-xl font-bold mb-2">Agents</h2>
             </div>
             <hr className="my-2"/>
             <div className="flex justify-between items-center mb-4">
-                <input type="text" placeholder="Search Enquiries..."
+                <input type="text" placeholder="Search Agents..."
                        className="border rounded px-2 py-1 w-1/4 text-sm placeholder:text-sm placeholder:pl-2"
                        value={searchTerm} onChange={handleSearchChange}/>
                 <div className="text-sm text-gray-500">Total
-                    records: {currentItems ? currentItems.length : 0}/{enquiries ? enquiries.length : 0}</div>
+                    records: {currentItems ? currentItems.length : 0}/{inquiries ? inquiries.length : 0}</div>
             </div>
             <div className="grid-cols-5 gap-4 text-center font-bold mb-2 hidden sm:grid">
                 <div className="text-[0.9rem]">Enquiry Ref Number</div>
@@ -135,4 +129,4 @@ const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
     );
 };
 
-export default EnquiryList;
+export default AgentsList;

@@ -5,7 +5,7 @@ import {LoadingProvider} from "./context/LoadingContext";
 import LoadingPage from "./pages/LoadingPage";
 import {ToastProvider} from "./context/ToastContext";
 import {AxiosProvider} from "./context/AxiosContext";
-import {DashboardProvider} from "./context/DashboardContext";
+import {DashboardProvider} from "./context/EnquiryContext";
 
 export default function App() {
     return (

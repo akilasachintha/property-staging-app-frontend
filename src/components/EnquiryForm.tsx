@@ -1,40 +1,29 @@
-import React, {FC, useState} from 'react';
-import { Formik, Form } from 'formik';
+import React, {FC, useEffect, useState} from 'react';
+import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
-import { AiOutlineClose } from 'react-icons/ai';
+import {AiOutlineClose} from 'react-icons/ai';
 import FormFieldBlack from "./FormFieldBlack";
-import MultipleImageUpload from "components/MultipleImageUpload";
-import Select from "react-select";
 import useEnquiryHook from "../hooks/useEnquiryHook";
 import {useLoadingContext} from "../context/LoadingContext";
-import {useDashboardContext} from "../context/DashboardContext";
+import {useEnquiryContext} from "../context/EnquiryContext";
 import {useAuthContext} from "../context/AuthContext";
+import Dropdown from "./Dropdown";
+import MultipleImageUpload from "./MultipleImageUpload";
 
 interface IFormInput {
     clientName: string;
     clientEmail: string;
-    clientPhone: string;
+    clientPhoneNumber: string;
     propertyAddress: string;
     propertyImages: File[];
     specialNotes: string;
-    agentDetails: string;
+    agentId: string;
 }
-
-const initialValues: IFormInput = {
-    clientName: '',
-    clientEmail: '',
-    clientPhone: '',
-    propertyAddress: '',
-    propertyImages: [],
-    specialNotes: '',
-    agentDetails: '',
-};
-
 
 const formFields = [
     { label: 'Client Name', name: 'clientName', type: 'text' },
     { label: 'Client Email', name: 'clientEmail', type: 'email' },
-    { label: 'Client Phone', name: 'clientPhone', type: 'tel' },
+    { label: 'Client Phone', name: 'clientPhoneNumber', type: 'tel' },
     { label: 'Property Address', name: 'propertyAddress', type: 'text' },
     { label: 'Special Notes', name: 'specialNotes', type: 'text' },
 ];
@@ -44,21 +33,56 @@ interface InquiryFormProps {
 }
 
 const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
-    const [selectBorderColor, setSelectBorderColor] = useState<string>('#9ca3af');
-    const [selectUploaderBorderColor, setSelectUploaderBorderColor] = useState<string>('#9ca3af');
+    const [initialValues, setInitialValues] = useState<IFormInput>({
+        clientName: '',
+        clientEmail: '',
+        clientPhoneNumber: '',
+        propertyAddress: '',
+        propertyImages: [],
+        specialNotes: '',
+        agentId: '',
+    });
     const {agentsList } = useEnquiryHook();
-    const {createEnquiry} = useDashboardContext();
-    const {hideLoading} = useLoadingContext();
+    const {createEnquiry, updateEnquiry, isEditEnquiry, selectedEnquiryApi} = useEnquiryContext();
+    const [selectUploaderBorderColor, setSelectUploaderBorderColor] = useState<string>('#9ca3af');
+    const {isLoading, showLoading, hideLoading} = useLoadingContext();
     const {userRole} = useAuthContext();
+
+    useEffect(() => {
+        console.log("selectedEnquiryApi" + JSON.stringify(selectedEnquiryApi));
+        if (selectedEnquiryApi && isEditEnquiry) {
+            const {
+                clientName = '',
+                clientEmail = '',
+                clientPhoneNumber = '',
+                propertyAddress = '',
+                propertyImages = [],
+                specialNotes = '',
+                agentId = '',
+            } = selectedEnquiryApi;
+
+            setInitialValues({
+                clientName,
+                clientEmail,
+                clientPhoneNumber,
+                propertyAddress,
+                propertyImages,
+                specialNotes,
+                agentId,
+            });
+
+            console.log("selectedEnquiryApi" + JSON.stringify(selectedEnquiryApi));
+        }
+    }, [selectedEnquiryApi, isEditEnquiry]);
 
     const validationSchema = Yup.object({
         clientName: Yup.string().required('Required'),
         clientEmail: Yup.string().email('Invalid email address').required('Required'),
-        clientPhone: Yup.string().required('Required'),
+        clientPhoneNumber: Yup.string().required('Required'),
         propertyAddress: Yup.string().required('Required'),
         propertyImages: Yup.array().required('Required'),
         specialNotes: Yup.string().required('Required'),
-        agentDetails: userRole === 'Admin' ? Yup.string().required('Required') : Yup.string(),
+        agentId: userRole === 'Admin' ? Yup.string().required('Required') : Yup.string(),
     });
 
     const agentOptions = [
@@ -67,23 +91,55 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
     ];
 
     const handleSubmit = async (values: IFormInput, { setSubmitting }: any) => {
-        const result = await createEnquiry(
-            values.clientName,
-            values.clientEmail,
-            values.clientPhone,
-            values.propertyAddress,
-            values.specialNotes,
-            values.agentDetails,
-            values.propertyImages
-        );
+        if (!isEditEnquiry) {
+            const result = await createEnquiry(
+                values.clientName,
+                values.clientEmail,
+                values.clientPhoneNumber,
+                values.propertyAddress,
+                values.specialNotes,
+                values.agentId,
+                values.propertyImages
+            );
 
-        if(result){
-            hideLoading();
-            onClose();
+            if (result) {
+                hideLoading();
+                onClose();
+            }
+        } else {
+            console.log("selectedEnquiryApi EDIT");
+            const result = await updateEnquiry(
+                values.clientName,
+                values.clientEmail,
+                values.clientPhoneNumber,
+                values.propertyAddress,
+                values.specialNotes,
+                values.agentId,
+                values.propertyImages
+            );
+
+            console.log("selectedEnquiryApi EDIT" + JSON.stringify(result));
+
+            if (result) {
+                hideLoading();
+                onClose();
+            }
+
+            setSubmitting(false);
         }
 
         setSubmitting(false);
     };
+
+    const SampleTableData = [
+        { type: 'Type 1', count: 5, price: 100 },
+        { type: 'Type 2', count: 3, price: 150 },
+    ];
+
+    if (isLoading) {
+        showLoading();
+        return null;
+    }
 
     return (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -91,74 +147,69 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
+                enableReinitialize={true}
             >
-                {({ isSubmitting, setFieldValue, errors, touched }) => (
-                    <Form className="bg-white p-4 rounded relative w-5/6 sm:w-5/6 lg:w-5/6 overflow-auto h-2/3 lg:h-5/6 flex flex-col justify-between">
+                {({ isSubmitting, setFieldValue}) => (
+                    <Form
+                        className="bg-white p-4 rounded relative w-10/12 h-5/6 sm:w-3/4 lg:w-5/6 flex flex-col justify-between overflow-y-scroll">
                         <div>
                             <AiOutlineClose className="absolute top-2 right-2 cursor-pointer" onClick={onClose} />
-                            <h2 className="mb-4 text-xl font-bold text-black">Create New Enquiry</h2>
-                            <div className="flex flex-wrap -mx-2">
-                                {
-                                    userRole === 'Admin' && (
-                                        <div className="w-full sm:w-1/2 px-2 my-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Agent</label>
-                                            <Select
-                                                options={agentOptions}
-                                                styles={{
-                                                    control: (base) => ({
-                                                        ...base,
-                                                        fontSize: '0.8rem',
-                                                        fontSmooth: 'auto',
-                                                        borderColor:
-                                                            errors.agentDetails && touched.agentDetails
-                                                                ? '#ef4444'
-                                                                : selectBorderColor,
-                                                    }),
-                                                    option: (base, props) => ({
-                                                        ...base,
-                                                        fontSize: '0.8rem',
-                                                        fontSmooth: 'auto',
-                                                        backgroundColor: props.isSelected ? '#DFC469' : '#fff',
-                                                        color: props.isSelected ? '#fff' : '#111',
-                                                    }),
-                                                }}
-                                                onFocus={(e) => { e.target.style.borderColor = '#111' }}
-                                                onBlur={(e) => { e.target.style.borderColor = '#9ca3af' }}
-                                                getOptionValue={(option) => option.value}
-                                                onChange={(selectedOption) => {
-                                                    setFieldValue('agentDetails', selectedOption?.value).then(r => console.log(r));
-                                                    if (selectedOption?.value) {
-                                                        setSelectBorderColor('#22c55e'); // green
-                                                    } else {
-                                                        setSelectBorderColor('#ef4444'); // red
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                    )
-                                }
+                            <h2 className="mb-4 text-xl font-bold text-black">{isEditEnquiry ? 'Change Enquiry' : 'Create Enquiry'}</h2>
+                            <div className="flex flex-col lg:flex-row">
+                                <div className="flex flex-wrap lg:w-1/2">
+                                    {
+                                        userRole === 'Admin' && (
+                                            <div className="w-full sm:w-1/2 px-2 my-2">
+                                                <Dropdown options={agentOptions} label="Agent" name="agentId" />
+                                            </div>
+                                        )
+                                    }
 
-                                {formFields.map((field, index) => (
-                                    <div key={index} className="w-full sm:w-1/2 px-2 my-2">
-                                        <FormFieldBlack key={field.name} label={field.label} name={field.name} type={field.type} />
+                                    {formFields.map((field, index) => (
+                                        <div key={index} className="w-full sm:w-1/2 px-2 my-2">
+                                            <FormFieldBlack key={field.name} label={field.label} name={field.name}
+                                                            type={field.type}/>
+                                        </div>
+                                    ))}
+                                    <div className="w-full px-2 my-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Upload Property Images</label>
+                                        <MultipleImageUpload borderColor={selectUploaderBorderColor} onDrop={(files: File[]) => {
+                                            setFieldValue('propertyImages', files).catch((err) => console.log(err));
+                                            if (files.length > 0) {
+                                                setSelectUploaderBorderColor('#22c55e'); // green
+                                            } else {
+                                                setSelectUploaderBorderColor('#ef4444'); // red
+                                            }
+                                        }} />
                                     </div>
-                                ))}
-                                <div className="w-full px-2 my-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload Property Images</label>
-                                    <MultipleImageUpload borderColor={selectUploaderBorderColor} onDrop={(files: File[]) => {
-                                        setFieldValue('propertyImages', files).catch((err) => console.log(err));
-                                        if (files.length > 0) {
-                                            setSelectUploaderBorderColor('#22c55e'); // green
-                                        } else {
-                                            setSelectUploaderBorderColor('#ef4444'); // red
-                                        }
-                                    }} />
+                                </div>
+                                <div className="lg:w-1/2">
+                                    <div className="mt-8">
+                                        <div className="flex flex-col text-center">
+                                            <div className="flex flex-row bg-gray-400 rounded font-bold">
+                                                <div className="w-1/3 p-2">Type</div>
+                                                <div className="w-1/3 p-2">Count</div>
+                                                <div className="w-1/3 p-2">Price</div>
+                                            </div>
+
+                                            {SampleTableData.map((data, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex flex-row"
+                                                >
+                                                    <div className="w-1/3 p-2">{data.type}</div>
+                                                    <div className="w-1/3 p-2">{data.count}</div>
+                                                    <div className="w-1/3 p-2">{data.price}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="flex space-x-4">
-                            <button type="button" onClick={onClose} className="w-1/2 px-4 py-2 mt-4 text-white bg-gray-500 rounded hover:bg-gray-700">Cancel</button>
-                            <button type="submit" disabled={isSubmitting} className="w-1/2 px-4 py-2 mt-4 text-white bg-primaryGold rounded hover:bg-yellow-600">Submit</button>
+                            <button type="button" onClick={onClose} className="w-1/2 px-4 py-2 mt-4 text-white bg-gray-600 rounded hover:bg-gray-700 focus:ring-2 focus:ring-gray-700 focus:ring-offset-2">Cancel</button>
+                            <button type="submit" disabled={isSubmitting} className="w-1/2 px-4 py-2 mt-4 text-white bg-yellow-400 rounded hover:bg-yellow-500 focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2">Submit</button>
                         </div>
                     </Form>
                 )}

@@ -1,8 +1,6 @@
 import EnquiryList from "../../components/EnquiryList";
-import Breadcrumb from "../../components/BreadCrumb";
-import EnquiryForm from "../../components/EnquiryForm";
+import Breadcrumb from "../../components/baseComponents/BreadCrumb";
 import React from "react";
-import {useDashboardContext} from "../../context/DashboardContext";
 
 export default function DashboardEnquiryPage() {
     return (

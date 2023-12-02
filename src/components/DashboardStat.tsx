@@ -3,7 +3,7 @@ import React from "react";
 import {useAuthContext} from "../context/AuthContext";
 import {FaCheckCircle, FaFileInvoice, FaRegQuestionCircle, FaUserTie} from "react-icons/fa";
 import {IconType} from "react-icons";
-import {useDashboardContext} from "../context/DashboardContext";
+import {useEnquiryContext} from "../context/EnquiryContext";
 
 interface IData {
     id: string;
@@ -14,7 +14,7 @@ interface IData {
 
 export default function DashboardStat() {
     const {userRole} = useAuthContext();
-    const {dashboardItems} = useDashboardContext();
+    const {dashboardItems} = useEnquiryContext();
 
     const data: IData[] = [
         { id: '1', icon: FaUserTie, title: 'Agents', count: dashboardItems.usersCount },

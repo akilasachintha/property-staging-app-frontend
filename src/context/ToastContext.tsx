@@ -57,7 +57,7 @@ export const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
             {children}
             {messages.map((msg, index) => (
                 <div key={index} style={{
-                    zIndex: 9999,
+                    zIndex: 999999,
                     position: 'fixed',
                     top: `${8 + index * 50}px`,
                     left: '8px',

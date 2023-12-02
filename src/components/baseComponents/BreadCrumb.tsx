@@ -7,7 +7,7 @@ export default function Breadcrumb() {
 
     return (
         <div className="px-3 py-2 bg-white rounded-lg shadow-sm mb-5">
-            <Link to="/" className="text-primaryGold hover:underline">Home</Link>
+            <Link to="/" className="text-primaryGold text-sm text-center hover:underline">Home</Link>
             {pathNames.map((value, index) => {
                 const isLast = index === pathNames.length - 1;
                 const to = `/${pathNames.slice(0, index + 1).join('/')}`;
@@ -16,9 +16,9 @@ export default function Breadcrumb() {
                 const displayName = value.charAt(0).toUpperCase() + value.slice(1);
 
                 return isLast ? (
-                    <span key={to} className="mx-2">/ {displayName}</span>
+                    <span key={to} className="mx-2 text-sm text-center">/ {displayName}</span>
                 ) : (
-                    <span key={to} className="mx-2">/ <Link to={to} className="text-primaryGold hover:underline">{displayName}</Link></span>
+                    <span key={to} className="mx-2">/ <Link to={to} className="text-primaryGold text-sm text-center hover:underline">{displayName}</Link></span>
                 );
             })}
         </div>
