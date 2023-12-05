@@ -9,8 +9,43 @@ export type EnquiryType = {
     createdDate: string;
     id: string;
 }
+
+export type InvoiceType = {
+    id: string;
+    invoiceDate: string;
+    agentName: string;
+    agentEmail: string;
+    invoiceStatus: string;
+}
+
+export type ExpenseType = {
+    expenseName: string;
+    expenseDescription: string;
+    expenseCount: number;
+    expenseAmount: number,
+}
+
+export type Invoice = {
+    id: string;
+    enquiryId: string;
+    invoiceDate: string;
+    agentName: string;
+    agentEmail: string;
+    clientName: string;
+    clientEmail: string;
+    clientPhoneNumber: string;
+    propertyAddress: string;
+    specialNotes: string;
+    invoiceStatus: string;
+    invoiceEmailedDate: string;
+    totalPrice: number;
+    agentCommission: number;
+    expenses: ExpenseType[];
+}
+
 export type DashboardContextType = {
     enquiryList: EnquiryType[];
+    invoiceList: InvoiceType[];
     createEnquiry: (
         clientName: string,
         clientEmail: string,
@@ -18,8 +53,12 @@ export type DashboardContextType = {
         propertyAddress: string,
         specialNotes: string,
         agentId: string,
-        propertyImages: File[]
+        propertyImages: any[],
     ) => Promise<boolean | undefined>;
+    createInvoice: (
+        enquiryId: string,
+        expenses: ExpenseType[],
+    ) => Promise<boolean>;
     updateEnquiry: (
         clientName: string,
         clientEmail: string,
@@ -27,7 +66,7 @@ export type DashboardContextType = {
         propertyAddress: string,
         specialNotes: string,
         agentId: string,
-        propertyImages: File[]
+        propertyImages: any[],
     ) => Promise<boolean | undefined>;
     dashboardItems: DashboardItemType;
     isInquiryFormOpen: boolean;
@@ -41,11 +80,42 @@ export type DashboardContextType = {
     onOpenDeleteModal?: () => void;
     selectedEnquiry?: EnquiryType | null;
     setSelectedEnquiry?: (enquiry: EnquiryType | null) => void;
+    setSelectedInvoice?: (invoice: InvoiceType | null) => void;
     setIsEditEnquiry?: (value: boolean) => void;
     isEditEnquiry?: boolean;
     getEnquiry?: (id: string) => Promise<any | null>;
-    selectedEnquiryApi?: any | null;
+    selectedEnquiryApi?: Enquiry | null;
+    selectedInvoiceApi?: Invoice | null;
+    isEditInvoice?: boolean;
+    setIsEditInvoice?: (value: boolean) => void;
+    isInvoiceFormOpen?: boolean;
+    onCloseInvoice: () => void;
+    onOpenInvoice: () => void;
+    getInvoices?: () => Promise<InvoiceType[]>;
+    getInvoice?: (id: string) => Promise<any | null>;
+    selectedInvoice?: InvoiceType | null;
+    updateInvoice: (
+        id: string,
+        expenses: ExpenseType[],
+    ) => Promise<boolean | undefined>;
+    enquiryInvoiceList?: InvoiceType[];
+    getInvoicesByEnquiryId?: (id: string) => Promise<InvoiceType[]>;
 };
+
+export type Enquiry = {
+    id: string;
+    clientName: string;
+    clientEmail: string;
+    clientPhoneNumber: string;
+    propertyAddress: string;
+    specialNotes: string;
+    status: string;
+    agentId: string;
+    agentName: string;
+    agentEmail: string;
+    createdDate: string;
+    propertyImages: any[];
+}
 
 type DashboardProviderProps = {
     children: ReactNode;
@@ -60,6 +130,7 @@ type DashboardItemType = {
 
 export const EnquiryContext = createContext<DashboardContextType>({
     enquiryList: [],
+    invoiceList: [],
     createEnquiry: () => Promise.resolve(false),
     updateEnquiry: () => Promise.resolve(false),
     getEnquiry: () => Promise.resolve(null),
@@ -85,18 +156,42 @@ export const EnquiryContext = createContext<DashboardContextType>({
     onOpenDeleteModal: () => {},
     selectedEnquiry: null,
     setSelectedEnquiry: () => {},
+    setSelectedInvoice: () => {
+    },
     setIsEditEnquiry: () => {},
     isEditEnquiry: false,
     selectedEnquiryApi: null,
+    selectedInvoiceApi: null,
+    isEditInvoice: false,
+    setIsEditInvoice: () => {
+    },
+    isInvoiceFormOpen: false,
+    onCloseInvoice: () => {
+    },
+    onOpenInvoice: () => {
+    },
+    createInvoice: () => Promise.resolve(false),
+    getInvoices: () => Promise.resolve([]),
+    getInvoice: () => Promise.resolve(null),
+    selectedInvoice: null,
+    updateInvoice: () => Promise.resolve(false),
+    enquiryInvoiceList: [],
+    getInvoicesByEnquiryId: () => Promise.resolve([]),
 });
 
 export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => {
     const [enquiryList, setEnquiryList] = useState<EnquiryType[]>([]);
+    const [invoiceList, setInvoiceList] = useState<InvoiceType[]>([]);
+    const [enquiryInvoiceList, setEnquiryInvoiceList] = useState<InvoiceType[]>([]);
     const [isEditEnquiry, setIsEditEnquiry] = useState(false);
+    const [isEditInvoice, setIsEditInvoice] = useState(false);
     const [selectedEnquiry, setSelectedEnquiry] = useState<EnquiryType | null>(null);
+    const [selectedInvoice, setSelectedInvoice] = useState<InvoiceType | null>(null);
     const [isInquiryFormOpen, setIsInquiryFormOpen] = useState(false);
+    const [isInvoiceFormOpen, setIsInvoiceFormOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [selectedEnquiryApi, setSelectedEnquiryApi] = useState<any | null>(null);
+    const [selectedEnquiryApi, setSelectedEnquiryApi] = useState<Enquiry | null>(null);
+    const [selectedInvoiceApi, setSelectedInvoiceApi] = useState<Invoice | null>(null);
     const [dashboardItems, setDashboardItems] = useState<DashboardItemType>({
         enquiresCount: '',
         usersCount: '',
@@ -114,12 +209,27 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
 
             const response = await axiosInstance.get(`/enquiry/${id}`);
             if (response && response.data && response.data.data !== null) {
-                console.log("result" + response.data.data);
                 setSelectedEnquiryApi(response.data.data);
             }
         } catch (error: any) {
             console.log(error.message);
-            selectedEnquiry && setSelectedEnquiry(null);
+            selectedEnquiryApi && setSelectedEnquiryApi(null);
+        }
+    }
+
+    const getInvoice = async (id: string) => {
+        try {
+            if (!id) return null;
+
+            const response = await axiosInstance.get(`/invoice/${id}`);
+            if (response && response.data && response.data.data !== null) {
+                setSelectedInvoiceApi(response.data.data);
+                setSelectedInvoice(response.data.data);
+            }
+        } catch (error: any) {
+            console.log(error.message);
+            selectedInvoiceApi && setSelectedInvoiceApi(null);
+            selectedInvoice && setSelectedInvoice(null);
         }
     }
 
@@ -137,6 +247,51 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
 
                 setEnquiryList(enquiries);
                 return enquiries;
+            }
+        } catch (error: any) {
+            console.log(error.message);
+            return [];
+        }
+    }
+
+    const getInvoicesByEnquiryId = async (id: string) => {
+        try {
+            const response = await axiosInstance.get(`/enquiry/${id}/invoice`);
+
+            if (response && response.data && response.data.data !== null) {
+                const invoices = response.data.data.map((invoice: InvoiceType) => ({
+                    id: invoice.id,
+                    invoiceDate: invoice.invoiceDate,
+                    agentName: invoice.agentName,
+                    agentEmail: invoice.agentEmail,
+                    invoiceStatus: invoice.invoiceStatus,
+                }));
+
+                setEnquiryInvoiceList(invoices);
+                return invoices;
+            }
+        } catch (error: any) {
+            console.log(error.message);
+            setEnquiryInvoiceList([]);
+            return [];
+        }
+    }
+
+    const getInvoices = async () => {
+        try {
+            const response = await axiosInstance.get('/invoices');
+
+            if (response && response.data && response.data.data !== null) {
+                const invoices = response.data.data.map((invoice: InvoiceType) => ({
+                    id: invoice.id,
+                    invoiceDate: invoice.invoiceDate,
+                    agentName: invoice.agentName,
+                    agentEmail: invoice.agentEmail,
+                    invoiceStatus: invoice.invoiceStatus,
+                }));
+
+                setInvoiceList(invoices);
+                return invoices;
             }
         } catch (error: any) {
             console.log(error.message);
@@ -195,6 +350,33 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
         }
     }
 
+    const createInvoice = async (
+        id: string,
+        expenses: ExpenseType[],
+    ): Promise<boolean> => {
+        try {
+            if (axiosInstance) {
+                console.log(id);
+                const data = {
+                    id,
+                    expenses: expenses,
+                }
+
+                const response = await axiosInstance.post('/invoice', data);
+                if (response && response.data && response.data.data !== null) {
+                    showMessage('Invoice sent successfully.', 'success');
+                    const updatedInvoiceList = await getInvoices();
+                    setInvoiceList(updatedInvoiceList);
+                    return true;
+                }
+            }
+            return false;
+        } catch (error: any) {
+            showMessage('Failed to send enquiry.', 'error');
+            return false;
+        }
+    }
+
     const getDashboardItems = async () => {
         try {
             const response = await axiosInstance.get('/dashboard');
@@ -215,8 +397,17 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
         setIsEditEnquiry(false);
     }
 
+    const onCloseInvoice = () => {
+        setIsInvoiceFormOpen(false);
+        setIsEditInvoice(false);
+    }
+
     const onOpenEnquiry = () => {
         setIsInquiryFormOpen(true);
+    }
+
+    const onOpenInvoice = () => {
+        setIsInvoiceFormOpen(true);
     }
 
     const onCloseDeleteModal = () => {
@@ -256,7 +447,7 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
         propertyAddress: string,
         specialNotes: string,
         agentId: string,
-        propertyImages: File[]
+        propertyImages: File[],
     ) => {
         try {
             if(!selectedEnquiry) return;
@@ -302,6 +493,35 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
         }
     }
 
+    const updateInvoice = async (
+        id: string,
+        expenses: ExpenseType[],
+    ) => {
+        try {
+            if (axiosInstance) {
+                const data = {
+                    id,
+                    expenses,
+                }
+
+                const response = await axiosInstance.put(`/invoice`, data);
+
+                if (response && response.data && response.data.data !== null) {
+                    setSelectedInvoice(response.data.data);
+                    await getInvoice(selectedInvoice?.id || '');
+                    const updatedInvoiceList = await getInvoices();
+                    setInvoiceList(updatedInvoiceList);
+                    return true;
+                }
+
+                return false;
+            }
+        } catch (error: any) {
+            showMessage('Failed to update enquiry.', 'error');
+            return false;
+        }
+    }
+
     return (
         <EnquiryContext.Provider value={{
             enquiryList,
@@ -319,16 +539,39 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
             onOpenDeleteModal,
             onConfirmDelete,
             selectedEnquiry,
+            setSelectedInvoice,
             setSelectedEnquiry,
             setIsEditEnquiry,
             isEditEnquiry,
             updateEnquiry,
             getEnquiry,
             selectedEnquiryApi,
+            selectedInvoiceApi,
+            isEditInvoice,
+            setIsEditInvoice,
+            isInvoiceFormOpen,
+            onCloseInvoice,
+            onOpenInvoice,
+            createInvoice,
+            getInvoices,
+            invoiceList,
+            getInvoice,
+            selectedInvoice,
+            updateInvoice,
+            enquiryInvoiceList,
+            getInvoicesByEnquiryId,
         }}>
             {children}
         </EnquiryContext.Provider>
     );
 };
 
-export const useEnquiryContext = () => useContext(EnquiryContext);
+export const useEnquiryContext = () => {
+    const context = useContext(EnquiryContext);
+
+    if (context === undefined) {
+        throw new Error('useEnquiryContext must be used within a EnquiryProvider');
+    }
+
+    return context;
+}

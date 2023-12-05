@@ -98,6 +98,13 @@ const EnquiryList: FC<EnquiryListProps> = ({rowsCount}) => {
                 <div className="text-[0.9rem]">Submission Date</div>
                 <div className="text-[0.9rem]">Actions</div>
             </div>
+            {
+                !currentItems && (
+                    <div className="flex justify-center items-center text-gray-500 text-sm mt-10">
+                        No records found.
+                    </div>
+                )
+            }
             {currentItems && currentItems.length > 0 && currentItems.map((inquiry: EnquiryType, index) => (
                 <div key={index}
                      className="grid grid-cols-1 sm:grid-cols-5 gap-4 text-center justify-center py-3 cursor-pointer hover:bg-yellow-100 transition-colors duration-200 items-center">

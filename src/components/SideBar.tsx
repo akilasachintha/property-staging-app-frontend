@@ -1,10 +1,10 @@
 import logo from "../assets/logo.png";
-import {FaCog, FaHome, FaSignOutAlt, FaTimes, FaUser} from "react-icons/fa";
+import {FaCog, FaFileInvoiceDollar, FaHome, FaSignOutAlt, FaTimes, FaUser} from "react-icons/fa";
 import {Link, useMatch} from "react-router-dom";
 import React, {Dispatch, SetStateAction} from "react";
 import useAuthHook from "../hooks/useAuthHook";
-import { FaFileWaveform } from "react-icons/fa6";
 import {useAuthContext} from "../context/AuthContext";
+import {HiDocumentCheck} from "react-icons/hi2";
 
 interface SideBarProps {
     isMenuOpen: boolean;
@@ -23,9 +23,10 @@ const SideBar : React.FC<SideBarProps> = ({isMenuOpen, setIsMenuOpen}) => {
         path: '/',
     });
 
-    const isAgents = useMatch('/agents');
-    const isSettings = useMatch('/settings');
-    const isEnquiry = useMatch('/enquiry');
+    const isAgents = useMatch('/agents/*');
+    const isSettings = useMatch('/profile/*');
+    const isEnquiry = useMatch('/enquiry/*');
+    const isInvoice = useMatch('/invoice/*');
 
     return (
         <div className={`fixed inset-y-0 left-0 transform ${isMenuOpen ? 'translate-x-0 ease-out transition-medium' : '-translate-x-full ease-in transition-medium'} w-64 bg-gradient-to-b from-black to-gray-900 border-r dark:bg-primaryBlack dark:border-gray-800 dark:text-gray-300 overflow-auto z-30 md:relative md:translate-x-0`}>
@@ -44,19 +45,26 @@ const SideBar : React.FC<SideBarProps> = ({isMenuOpen, setIsMenuOpen}) => {
                         <FaHome className="mx-4"/>
                         <span>Dashboard</span>
                     </Link>
-                    <Link to="/enquiry" className={`flex items-center px-4 py-2 mt-2 text-${isEnquiry ? 'primaryBlack' : 'primaryGold'} dark:text-${isEnquiry ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isEnquiry ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
-                        <FaFileWaveform className="mx-4"/>
+                    <Link to="/enquiry"
+                          className={`flex items-center px-4 py-2 mt-2 text-${isEnquiry ? 'primaryBlack' : 'primaryGold'} dark:text-${isEnquiry ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isEnquiry ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
+                        <HiDocumentCheck className="mx-4"/>
                         <span>Enquiries</span>
                     </Link>
+                    <Link to="/invoice"
+                          className={`flex items-center px-4 py-2 mt-2 text-${isInvoice ? 'primaryBlack' : 'primaryGold'} dark:text-${isInvoice ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isInvoice ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
+                        <FaFileInvoiceDollar className="mx-4"/>
+                        <span>Invoices</span>
+                    </Link>
                     {userRole === 'Admin' && (
-                        <Link to="/agents" className={`flex items-center px-4 py-2 mt-2 text-${isAgents ? 'primaryBlack' : 'primaryGold'} dark:text-${isAgents ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isAgents ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
+                        <Link to="/agent" className={`flex items-center px-4 py-2 mt-2 text-${isAgents ? 'primaryBlack' : 'primaryGold'} dark:text-${isAgents ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isAgents ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
                             <FaUser className="mx-4"/>
                             <span>Agents</span>
                         </Link>
                     )}
-                    <Link to="/settings" className={`flex items-center px-4 py-2 mt-2 text-${isSettings ? 'primaryBlack' : 'primaryGold'} dark:text-${isSettings ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isSettings ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
+                    <Link to="/profile"
+                          className={`flex items-center px-4 py-2 mt-2 text-${isSettings ? 'primaryBlack' : 'primaryGold'} dark:text-${isSettings ? 'primaryBlack' : 'primaryGold'} hover:bg-primaryGold dark:hover:bg-primaryGold hover:text-primaryBlack dark:hover:text-primaryBlack rounded ${isSettings ? 'bg-primaryGold dark:bg-primaryGold font-bold' : ''}`}>
                         <FaCog className="mx-4"/>
-                        <span>Settings</span>
+                        <span>Profile</span>
                     </Link>
                 </div>
             </nav>

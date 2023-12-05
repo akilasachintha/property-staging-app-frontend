@@ -1,20 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import React from 'react';
 import RegisterPage from 'pages/RegisterPage';
 import NotFoundPage from 'pages/NotFoundPage';
 import {useAuthContext} from "context/AuthContext";
 import DashboardPage from "pages/dashboard/DashboardPage";
-import ProfilePage from "pages/ProfilePage";
 import ForgetPasswordPage from "pages/ForgetPasswordPage";
 import LoginPage from "pages/LoginPage";
-import SettingsPage from "pages/SettingsPage";
 import DashboardHomePage from "pages/dashboard/DashboardHomePage";
 import EmailConfirmationPage from "pages/EmailConfirmationPage";
 import ResetPasswordPage from "pages/ResetPasswordPage";
 import DashboardEnquiryDetailsPage from "../pages/dashboard/DashboardEnquiryDetailsPage";
 import DashboardEnquiryPage from "../pages/dashboard/DashboardEnquiryPage";
-import DashboardUsersPage from "../pages/dashboard/DashboardUsersPage";
+import DashboardUserProfilePage from "../pages/dashboard/DashboardUserProfilePage";
 import DashboardAgentsPage from "../pages/dashboard/DashboardAgentsPage";
+import DashboardInvoicePage from "../pages/dashboard/DashboardInvoicePage";
+import DashboardInvoiceDetailsPage from "../pages/dashboard/DashboardInvoiceDetailsPage";
+import DashboardEnquiryInvoicePage from "../pages/dashboard/DashboardEnquiryInvoicePage";
 
 export default function AppRoutes() {
     const { isLoggedIn, userRole} = useAuthContext();
@@ -26,18 +27,20 @@ export default function AppRoutes() {
                     <>
                         <Route path="/" element={<DashboardPage />} >
                             <Route path="" element={<DashboardHomePage />} />
-                            <Route path="settings" element={<SettingsPage />} />
-                            <Route path="profile" element={<ProfilePage />} />
-                            <Route path="enquiry" element={<DashboardEnquiryPage />} />
+                            <Route path="profile" element={<DashboardUserProfilePage/>}/>
+                            <Route path="enquiry" element={<DashboardEnquiryPage/>}/>
                             <Route path="enquiry/:id" element={<DashboardEnquiryDetailsPage />} />
+                            <Route path="enquiry/:id/invoice" element={<DashboardEnquiryInvoicePage/>}/>
+                            <Route path="invoice" element={<DashboardInvoicePage/>}/>
+                            <Route path="invoice/:id" element={<DashboardInvoiceDetailsPage/>}/>
                             {
                                 userRole === 'Admin' && (
                                     <>
-                                        <Route path="agents" element={<DashboardAgentsPage />} />
+                                        <Route path="agent" element={<DashboardAgentsPage />} />
                                     </>
                                 )
                             }
-                            <Route path="users" element={<DashboardUsersPage />} />
+                            <Route path="users" element={<DashboardUserProfilePage/>}/>
                         </Route>
                     </>
                 )}

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 
 export interface AuthContextProps {
     isLoggedIn: boolean;
@@ -7,6 +7,7 @@ export interface AuthContextProps {
     userRole: string | null;
     login: (incomingToken: string, incomingUserRole: string, userFullName: string) => boolean;
     logout: () => void;
+    setUserFullName: (userFullName: string) => void;
 }
 
 interface AuthProviderProps {
@@ -20,6 +21,8 @@ const AuthContext = createContext<AuthContextProps>({
     userRole: null,
     login: () => false,
     logout: () => {},
+    setUserFullName: () => {
+    }
 });
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -77,7 +80,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, [isLoggedIn]);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, token, userRole, userFullName, login, logout }}>
+        <AuthContext.Provider value={{isLoggedIn, token, userRole, userFullName, login, logout, setUserFullName}}>
             {children}
         </AuthContext.Provider>
     );

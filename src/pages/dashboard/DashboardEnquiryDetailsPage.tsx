@@ -1,5 +1,5 @@
-import {useParams} from "react-router-dom";
-import React, { useEffect } from "react";
+import {useNavigate, useParams} from "react-router-dom";
+import React, {useEffect} from "react";
 import Carousel from "../../components/Carousel";
 import Button from "../../components/Button";
 import userPhoto from "../../assets/user.png";
@@ -13,7 +13,8 @@ interface PropertyImage {
 
 export default function DashboardEnquiryDetailsPage(){
     const {id} = useParams();
-    const {onOpenEnquiry, setIsEditEnquiry, setSelectedEnquiry, getEnquiry, selectedEnquiryApi} = useEnquiryContext();
+    const {onOpenEnquiry, onOpenInvoice, setIsEditEnquiry, setSelectedEnquiry, getEnquiry, selectedEnquiryApi} = useEnquiryContext();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (id) {
@@ -33,6 +34,14 @@ export default function DashboardEnquiryDetailsPage(){
         });
     }
 
+    const handleViewInvoicesButton = () => {
+        navigate(`/enquiry/${id}/invoice`);
+    }
+
+    const handleInvoiceButton = () => {
+        onOpenInvoice && onOpenInvoice();
+    }
+
     return (
         <div>
             <Breadcrumb/>
@@ -50,12 +59,20 @@ export default function DashboardEnquiryDetailsPage(){
                         )
                     }
                     <hr/>
+                    <div className="flex justify-end gap-4">
+                        <Button onClick={handleInvoiceButton}>Create Invoice</Button>
+                        <Button onClick={handleViewInvoicesButton}>Invoices History</Button>
+                        <Button onClick={handleEditButton}>Edit Enquiry</Button>
+                    </div>
+                    <hr/>
                     <div className="flex flex-col lg:flex-row m-auto gap-4 rounded p-2 md:p-4 justify-center w-full">
                         <div className="flex justify-center items-center w-full">
                             <button className="flex flex-col items-center justify-center mb-1">
                                 <img src={userPhoto} alt="User" className="h-10 w-10 rounded-full" />
-                                <span className="text-gray-800 dark:text-gray-900">Akila Sachintha</span>
-                                <span className="text-center text-xs">akilasachintha@gmail.com</span>
+                                <span
+                                    className="text-gray-800 dark:text-gray-900">{selectedEnquiryApi && selectedEnquiryApi.agentName}</span>
+                                <span
+                                    className="text-center text-xs">{selectedEnquiryApi && selectedEnquiryApi.agentEmail}</span>
                                 <span className="text-gray-800 text-xs dark:text-gray-900">Agent</span>
                             </button>
                         </div>
@@ -76,11 +93,6 @@ export default function DashboardEnquiryDetailsPage(){
                                 <p className="p-2 rounded text-xs">{selectedEnquiryApi && selectedEnquiryApi.status}</p>
                             </div>
                         </div>
-                    </div>
-                    <hr/>
-                    <div className="flex justify-end gap-4">
-                        <Button>Create Invoice</Button>
-                        <Button onClick={handleEditButton}>Edit Enquiry</Button>
                     </div>
                 </div>
             </div>

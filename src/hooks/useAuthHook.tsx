@@ -30,7 +30,7 @@ export default function useAuthHook(){
         }
     }
 
-    const registerHook = async (firstName: string, lastName: string, email: string, password: string, phoneNumber: string) => {
+    const registerHook = async (firstName: string, lastName: string, email: string, password: string, phoneNumber: string, bankAccountNumber: number, bsb: number) => {
         try{
             if(axiosInstance){
                 const response = await axiosInstance.post('/auth/register', {
@@ -39,7 +39,9 @@ export default function useAuthHook(){
                     email: email,
                     password: password,
                     role: 'Agent',
-                    phoneNumber: phoneNumber
+                    phoneNumber: phoneNumber,
+                    bankAccountNumber: bankAccountNumber.toString(),
+                    bsb: bsb.toString()
                 });
 
                 if(response && response.data && response.data.data !== null){
@@ -134,6 +136,72 @@ export default function useAuthHook(){
         }
     }
 
+    const editProfileHook = async (firstName: string, lastName: string, bankAccountNumber: number, bsb: number) => {
+        try {
+            if (axiosInstance) {
+                const response = await axiosInstance.put(`user`, {
+                    firstName: firstName,
+                    lastName: lastName,
+                    bankAccountNumber: bankAccountNumber.toString(),
+                    bsb: bsb.toString()
+                });
 
-    return {loginHook, logoutHook, registerHook, confirmEmailHook, forgotPasswordHook, resetPasswordHook};
+                if (response && response.data && response.data.isSuccess) {
+                    showMessage('Profile edited successfully.', 'success');
+                    return true;
+                }
+
+                if (response && response.data && response.data.error !== null) {
+                    return false;
+                }
+            }
+        } catch (error: any) {
+            showMessage('Profile edit failed.', 'error');
+            return false;
+        }
+    }
+
+    const getProfileHook = async () => {
+        try {
+            if (axiosInstance) {
+                const response = await axiosInstance.get(`/user`);
+
+                if (response && response.data && response.data.data !== null) {
+                    return response.data.data;
+                }
+
+                if (response && response.data && response.data.error !== null) {
+                    return false;
+                }
+            }
+        } catch (error: any) {
+            showMessage('Profile edit failed.', 'error');
+            return false;
+        }
+    }
+
+    const changePasswordHook = async (currentPassword: string, password: string, confirmPassword: string) => {
+        try {
+            if (axiosInstance) {
+                const response = await axiosInstance.post(`/auth/change`, {
+                    oldPassword: currentPassword,
+                    newPassword: password,
+                });
+
+                if (response && response.data && response.data.isSuccess) {
+                    showMessage('Password changed successfully.', 'success');
+                    return true;
+                }
+
+                if (response && response.data && response.data.error !== null) {
+                    return false;
+                }
+            }
+        } catch (error: any) {
+            showMessage('Password change failed.', 'error');
+            return false;
+        }
+    }
+
+    return {loginHook, logoutHook, registerHook, confirmEmailHook, forgotPasswordHook, resetPasswordHook, getProfileHook, editProfileHook, changePasswordHook};
 }

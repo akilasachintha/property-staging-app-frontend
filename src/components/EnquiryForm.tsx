@@ -3,19 +3,19 @@ import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import {AiOutlineClose} from 'react-icons/ai';
 import FormFieldBlack from "./FormFieldBlack";
-import useEnquiryHook from "../hooks/useEnquiryHook";
-import {useLoadingContext} from "../context/LoadingContext";
-import {useEnquiryContext} from "../context/EnquiryContext";
-import {useAuthContext} from "../context/AuthContext";
+import {useLoadingContext} from "context/LoadingContext";
+import {useEnquiryContext} from "context/EnquiryContext";
+import {useAuthContext} from "context/AuthContext";
 import Dropdown from "./Dropdown";
 import MultipleImageUpload from "./MultipleImageUpload";
+import {useAgentContext} from "../context/AgentContext";
 
 interface IFormInput {
     clientName: string;
     clientEmail: string;
     clientPhoneNumber: string;
     propertyAddress: string;
-    propertyImages: File[];
+    propertyImages: any[];
     specialNotes: string;
     agentId: string;
 }
@@ -27,7 +27,6 @@ const formFields = [
     { label: 'Property Address', name: 'propertyAddress', type: 'text' },
     { label: 'Special Notes', name: 'specialNotes', type: 'text' },
 ];
-
 interface InquiryFormProps {
     onClose: () => void;
 }
@@ -42,14 +41,13 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
         specialNotes: '',
         agentId: '',
     });
-    const {agentsList } = useEnquiryHook();
+    const {agentsList} = useAgentContext();
     const {createEnquiry, updateEnquiry, isEditEnquiry, selectedEnquiryApi} = useEnquiryContext();
     const [selectUploaderBorderColor, setSelectUploaderBorderColor] = useState<string>('#9ca3af');
     const {isLoading, showLoading, hideLoading} = useLoadingContext();
     const {userRole} = useAuthContext();
 
     useEffect(() => {
-        console.log("selectedEnquiryApi" + JSON.stringify(selectedEnquiryApi));
         if (selectedEnquiryApi && isEditEnquiry) {
             const {
                 clientName = '',
@@ -68,10 +66,8 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
                 propertyAddress,
                 propertyImages,
                 specialNotes,
-                agentId,
+                agentId
             });
-
-            console.log("selectedEnquiryApi" + JSON.stringify(selectedEnquiryApi));
         }
     }, [selectedEnquiryApi, isEditEnquiry]);
 
@@ -86,8 +82,8 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
     });
 
     const agentOptions = [
-        { value: '0', label: 'Not in the System - No Agent'},
-        ...(agentsList && agentsList.length > 0 ? agentsList.map((agent: any) => ({ value: agent.id, label: agent.name + ' - ' + agent.email })) : [])
+        {value: '5bf4548b-a9fc-4c95-9dc0-1d3beb3598b8', label: 'Not in the System - No Agent'},
+        ...(agentsList && agentsList.length > 0 ? agentsList.map((agent: any) => ({value: agent.id, label: (agent.firstName + ' ' + agent.lastName) + ' - ' + agent.email})) : [])
     ];
 
     const handleSubmit = async (values: IFormInput, { setSubmitting }: any) => {
@@ -107,7 +103,6 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
                 onClose();
             }
         } else {
-            console.log("selectedEnquiryApi EDIT");
             const result = await updateEnquiry(
                 values.clientName,
                 values.clientEmail,
@@ -115,10 +110,8 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
                 values.propertyAddress,
                 values.specialNotes,
                 values.agentId,
-                values.propertyImages
+                values.propertyImages,
             );
-
-            console.log("selectedEnquiryApi EDIT" + JSON.stringify(result));
 
             if (result) {
                 hideLoading();
@@ -131,10 +124,6 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
         setSubmitting(false);
     };
 
-    const SampleTableData = [
-        { type: 'Type 1', count: 5, price: 100 },
-        { type: 'Type 2', count: 3, price: 150 },
-    ];
 
     if (isLoading) {
         showLoading();
@@ -155,8 +144,11 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
                         <div>
                             <AiOutlineClose className="absolute top-2 right-2 cursor-pointer" onClick={onClose} />
                             <h2 className="mb-4 text-xl font-bold text-black">{isEditEnquiry ? 'Change Enquiry' : 'Create Enquiry'}</h2>
+                            <div className="flex flex-row justify-between">
+                                <div className="font-bold">Client Details</div>
+                            </div>
                             <div className="flex flex-col lg:flex-row">
-                                <div className="flex flex-wrap lg:w-1/2">
+                                <div className="flex flex-wrap">
                                     {
                                         userRole === 'Admin' && (
                                             <div className="w-full sm:w-1/2 px-2 my-2">
@@ -181,28 +173,6 @@ const EnquiryForm: FC<InquiryFormProps> = ({ onClose }) => {
                                                 setSelectUploaderBorderColor('#ef4444'); // red
                                             }
                                         }} />
-                                    </div>
-                                </div>
-                                <div className="lg:w-1/2">
-                                    <div className="mt-8">
-                                        <div className="flex flex-col text-center">
-                                            <div className="flex flex-row bg-gray-400 rounded font-bold">
-                                                <div className="w-1/3 p-2">Type</div>
-                                                <div className="w-1/3 p-2">Count</div>
-                                                <div className="w-1/3 p-2">Price</div>
-                                            </div>
-
-                                            {SampleTableData.map((data, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="flex flex-row"
-                                                >
-                                                    <div className="w-1/3 p-2">{data.type}</div>
-                                                    <div className="w-1/3 p-2">{data.count}</div>
-                                                    <div className="w-1/3 p-2">{data.price}</div>
-                                                </div>
-                                            ))}
-                                        </div>
                                     </div>
                                 </div>
                             </div>

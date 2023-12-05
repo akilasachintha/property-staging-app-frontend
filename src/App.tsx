@@ -6,6 +6,7 @@ import LoadingPage from "./pages/LoadingPage";
 import {ToastProvider} from "./context/ToastContext";
 import {AxiosProvider} from "./context/AxiosContext";
 import {DashboardProvider} from "./context/EnquiryContext";
+import {AgentProvider} from "./context/AgentContext";
 
 export default function App() {
     return (
@@ -14,8 +15,10 @@ export default function App() {
                 <LoadingProvider>
                     <AxiosProvider>
                         <DashboardProvider>
-                            <AppRoutes />
-                            <LoadingPage />
+                            <AgentProvider>
+                                <AppRoutes />
+                                <LoadingPage />
+                            </AgentProvider>
                         </DashboardProvider>
                     </AxiosProvider>
                 </LoadingProvider>

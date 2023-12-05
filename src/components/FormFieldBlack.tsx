@@ -35,13 +35,6 @@ const FormFieldBlack: React.FC<FormFieldProps> = ({ label, name, type }: FormFie
             ) : (
                 field.value && <AiOutlineCheckCircle className="absolute right-3 top-11 transform -translate-y-1/2 text-green-500" />
             ))}
-            <ErrorMessage name={name}>
-                {(msg) => (
-                    <div className="text-red-500 text-xs absolute top-full left-0 mt-1" style={{ display: 'none' }}>
-                        {msg}
-                    </div>
-                )}
-            </ErrorMessage>
         </div>
     );
 };

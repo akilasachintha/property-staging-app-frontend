@@ -10,6 +10,7 @@ interface IData {
     icon: IconType;
     title: string;
     count: string;
+    navigateTo?: string;
 }
 
 export default function DashboardStat() {
@@ -17,10 +18,10 @@ export default function DashboardStat() {
     const {dashboardItems} = useEnquiryContext();
 
     const data: IData[] = [
-        { id: '1', icon: FaUserTie, title: 'Agents', count: dashboardItems.usersCount },
-        { id: '2', icon: FaRegQuestionCircle, title: 'Enquiries', count: dashboardItems.enquiresCount },
-        { id: '3', icon: FaFileInvoice, title: 'Invoices', count: dashboardItems.invoicesCount },
-        { id: '4', icon: FaCheckCircle, title: 'Completed Enquiries', count: dashboardItems.completedEnquiresCount },
+        {id: '1', icon: FaUserTie, title: 'Agents', count: dashboardItems.usersCount, navigateTo: '/agent'},
+        {id: '2', icon: FaRegQuestionCircle, title: 'Enquiries', count: dashboardItems.enquiresCount, navigateTo: '/enquiry'},
+        {id: '3', icon: FaFileInvoice, title: 'Invoices', count: dashboardItems.invoicesCount, navigateTo: '/invoice'},
+        { id: '4', icon: FaCheckCircle, title: 'Completed Enquiries', count: dashboardItems.completedEnquiresCount, navigateTo: '/enquiry'},
     ];
 
     return(
@@ -29,7 +30,8 @@ export default function DashboardStat() {
                 userRole === 'Admin' && (
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 w-full">
                         {data.map((item, index) => (
-                            <DashboardStatCard key={index} icon={item.icon} title={item.title} count={item.count} />
+                            <DashboardStatCard key={index} icon={item.icon} title={item.title} count={item.count}
+                                               navigateTo={item.navigateTo}/>
                         ))}
                     </div>
                 )

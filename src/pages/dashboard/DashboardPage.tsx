@@ -6,12 +6,14 @@ import EnquiryForm from "../../components/EnquiryForm";
 import {useEnquiryContext} from "../../context/EnquiryContext";
 import {useAuthContext} from "../../context/AuthContext";
 import DeleteModal from "../../components/DeleteConfirmModal";
+import {useAgentContext} from "../../context/AgentContext";
+import InvoiceForm from "../../components/InvoiceForm";
 
 export default function DashboardPage() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const {isInquiryFormOpen, isDeleteModalOpen, onCloseEnquiry, getEnquires, getDashboardItems} = useEnquiryContext();
-    const {userRole} = useAuthContext();
-    const {isLoggedIn} = useAuthContext();
+    const {isInquiryFormOpen, isDeleteModalOpen, isInvoiceFormOpen, onCloseEnquiry, onCloseInvoice, getEnquires, getInvoices, getDashboardItems} = useEnquiryContext();
+    const {userRole, isLoggedIn} = useAuthContext();
+    const {getAgents} = useAgentContext();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,11 +24,14 @@ export default function DashboardPage() {
 
     useEffect(() => {
         getEnquires && getEnquires().catch((error) => console.log(error.message));
+        getInvoices && getInvoices().catch((error) => console.log(error.message));
     }, []);
 
     useEffect(() => {
         if(userRole === 'Admin'){
             getDashboardItems && getDashboardItems().catch((error) => console.log(error.message));
+            getAgents && getAgents().catch((error) => console.log(error.message));
+            getInvoices && getInvoices().catch((error) => console.log(error.message));
         }
     }, [userRole]);
 
@@ -35,6 +40,11 @@ export default function DashboardPage() {
             {
                 isInquiryFormOpen && (
                     <EnquiryForm onClose={onCloseEnquiry}/>
+                )
+            }
+            {
+                isInvoiceFormOpen && (
+                    <InvoiceForm onClose={onCloseInvoice}/>
                 )
             }
             {

@@ -40,7 +40,7 @@ const RegisterPage: React.FC = () => {
 
     const handleSubmit = async (values: any, { setSubmitting }: any) => {
         console.log(values);
-        const result = await registerHook(values.firstName, values.lastName, values.email, values.password, values.phone);
+        const result = await registerHook(values.firstName, values.lastName, values.email, values.password, values.phone, values.bankAccountNumber, values.bsb);
         if(result){
             hideLoading();
         }
