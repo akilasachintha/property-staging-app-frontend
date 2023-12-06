@@ -182,6 +182,11 @@ export default function useAuthHook(){
 
     const changePasswordHook = async (currentPassword: string, password: string, confirmPassword: string) => {
         try {
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match.', 'error');
+                return false;
+            }
+
             if (axiosInstance) {
                 const response = await axiosInstance.post(`/auth/change`, {
                     oldPassword: currentPassword,

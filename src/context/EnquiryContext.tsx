@@ -100,6 +100,7 @@ export type DashboardContextType = {
     ) => Promise<boolean | undefined>;
     enquiryInvoiceList?: InvoiceType[];
     getInvoicesByEnquiryId?: (id: string) => Promise<InvoiceType[]>;
+    sendInvoiceEmail: (id: string) => Promise<boolean>;
 };
 
 export type Enquiry = {
@@ -177,6 +178,7 @@ export const EnquiryContext = createContext<DashboardContextType>({
     updateInvoice: () => Promise.resolve(false),
     enquiryInvoiceList: [],
     getInvoicesByEnquiryId: () => Promise.resolve([]),
+    sendInvoiceEmail: () => Promise.resolve(false),
 });
 
 export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => {
@@ -256,6 +258,8 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
 
     const getInvoicesByEnquiryId = async (id: string) => {
         try {
+            if (!id || id === "") return;
+
             const response = await axiosInstance.get(`/enquiry/${id}/invoice`);
 
             if (response && response.data && response.data.data !== null) {
@@ -522,6 +526,28 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
         }
     }
 
+    const sendInvoiceEmail = async (id: string): Promise<boolean> => {
+        try {
+            if (axiosInstance) {
+                const response = await axiosInstance.get(`/invoice/${id}/email`);
+
+                if (response && response.data && response.data.data !== null) {
+                    showMessage('Invoice Emailed successfully.', 'success');
+                    const updatedInvoiceList = await getInvoices();
+                    setInvoiceList(updatedInvoiceList);
+                    return true;
+                }
+
+                return false;
+            } else {
+                return false;
+            }
+        } catch (error: any) {
+            showMessage('Failed to send invoice.', 'error');
+            return false;
+        }
+    }
+
     return (
         <EnquiryContext.Provider value={{
             enquiryList,
@@ -560,6 +586,7 @@ export const DashboardProvider : FC<DashboardProviderProps> = ({ children }) => 
             updateInvoice,
             enquiryInvoiceList,
             getInvoicesByEnquiryId,
+            sendInvoiceEmail,
         }}>
             {children}
         </EnquiryContext.Provider>

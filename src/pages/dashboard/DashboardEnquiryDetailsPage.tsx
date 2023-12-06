@@ -6,6 +6,7 @@ import userPhoto from "../../assets/user.png";
 import image from "assets/no-image.gif";
 import Breadcrumb from "../../components/baseComponents/BreadCrumb";
 import {useEnquiryContext} from "../../context/EnquiryContext";
+import {useAuthContext} from "../../context/AuthContext";
 
 interface PropertyImage {
     imageUri: string;
@@ -13,6 +14,7 @@ interface PropertyImage {
 
 export default function DashboardEnquiryDetailsPage(){
     const {id} = useParams();
+    const {userRole} = useAuthContext();
     const {onOpenEnquiry, onOpenInvoice, setIsEditEnquiry, setSelectedEnquiry, getEnquiry, selectedEnquiryApi} = useEnquiryContext();
     const navigate = useNavigate();
 
@@ -60,7 +62,11 @@ export default function DashboardEnquiryDetailsPage(){
                     }
                     <hr/>
                     <div className="flex justify-end gap-4">
-                        <Button onClick={handleInvoiceButton}>Create Invoice</Button>
+                        {
+                            userRole === 'Admin' && (
+                                <Button onClick={handleInvoiceButton}>Create Invoice</Button>
+                            )
+                        }
                         <Button onClick={handleViewInvoicesButton}>Invoices History</Button>
                         <Button onClick={handleEditButton}>Edit Enquiry</Button>
                     </div>
@@ -89,8 +95,6 @@ export default function DashboardEnquiryDetailsPage(){
                                 <p className="p-2 rounded text-xs">{selectedEnquiryApi && selectedEnquiryApi.propertyAddress}</p>
                                 <p className="p-2 rounded text-xs"><strong>Special Notes:</strong></p>
                                 <p className="p-2 rounded text-xs">{selectedEnquiryApi && selectedEnquiryApi.specialNotes}</p>
-                                <p className="p-2 rounded text-xs"><strong>Status:</strong></p>
-                                <p className="p-2 rounded text-xs">{selectedEnquiryApi && selectedEnquiryApi.status}</p>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Field, ErrorMessage, useField } from 'formik';
-import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
+import {Field, useField} from 'formik';
+import {AiOutlineCheckCircle, AiOutlineCloseCircle} from 'react-icons/ai';
 
 interface FormFieldProps {
     label: string;

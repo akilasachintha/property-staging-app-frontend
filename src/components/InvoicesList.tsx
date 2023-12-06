@@ -1,7 +1,7 @@
 import React, {ChangeEvent, FC, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {InvoiceType, useEnquiryContext} from '../context/EnquiryContext';
-import {AiOutlineDelete, AiOutlineEye} from "react-icons/ai";
+import {AiOutlineEye} from "react-icons/ai";
 import {useLoadingContext} from "../context/LoadingContext";
 
 type EnquiryListProps = {
@@ -13,9 +13,9 @@ const InvoiceList: FC<EnquiryListProps> = ({rowsCount}) => {
     const [itemsPerPage] = useState(rowsCount);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
-    const {invoiceList, onOpenDeleteModal} = useEnquiryContext();
-    const {setSelectedInvoice, setIsEditEnquiry} = useEnquiryContext();
-    const {showLoading, hideLoading} = useLoadingContext();
+    const {invoiceList} = useEnquiryContext();
+    const {setSelectedInvoice} = useEnquiryContext();
+    const {showLoading} = useLoadingContext();
 
     const enquiries =
         invoiceList &&
@@ -62,7 +62,7 @@ const InvoiceList: FC<EnquiryListProps> = ({rowsCount}) => {
         pageNumbers.push(i);
     }
 
-    if (!invoiceList || invoiceList.length <= 0) {
+    if (!invoiceList) {
         showLoading && showLoading();
         return null;
     }

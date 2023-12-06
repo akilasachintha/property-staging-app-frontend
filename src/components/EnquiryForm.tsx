@@ -23,7 +23,7 @@ interface IFormInput {
 const formFields = [
     { label: 'Client Name', name: 'clientName', type: 'text' },
     { label: 'Client Email', name: 'clientEmail', type: 'email' },
-    { label: 'Client Phone', name: 'clientPhoneNumber', type: 'tel' },
+    { label: 'Client Phone', name: 'clientPhoneNumber', type: 'number'},
     { label: 'Property Address', name: 'propertyAddress', type: 'text' },
     { label: 'Special Notes', name: 'specialNotes', type: 'text' },
 ];

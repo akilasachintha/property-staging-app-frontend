@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { FaArrowLeft, FaArrowRight, FaTimes } from 'react-icons/fa';
+import React, {useState} from 'react';
+import {FaArrowLeft, FaArrowRight, FaTimes} from 'react-icons/fa';
 
 interface ImagesInterface {
     images: string[];

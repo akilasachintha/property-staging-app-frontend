@@ -27,8 +27,8 @@ const InvoiceForm: FC<{ onClose: () => void }> = ({onClose}) => {
     });
 
     const {id} = useParams();
-    const navigate = useNavigate();
-    const {createInvoice, getInvoices, updateInvoice, selectedInvoiceApi, setIsEditInvoice, isEditInvoice} = useEnquiryContext();
+    useNavigate();
+    const {createInvoice, updateInvoice, selectedInvoiceApi, setIsEditInvoice, isEditInvoice} = useEnquiryContext();
 
     useEffect(() => {
         if (id && isEditInvoice && selectedInvoiceApi) {

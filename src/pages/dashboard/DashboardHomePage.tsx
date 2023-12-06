@@ -2,6 +2,7 @@ import React, {FC} from 'react';
 import EnquiryList from "../../components/EnquiryList";
 import DashboardStat from "../../components/DashboardStat";
 import {useAuthContext} from "../../context/AuthContext";
+import InvoiceList from "../../components/InvoicesList";
 
 const DashboardHomePage: FC = () => {
     const {userRole} = useAuthContext();
@@ -13,7 +14,8 @@ const DashboardHomePage: FC = () => {
                     <DashboardStat />
                 )
             }
-            <EnquiryList rowsCount={6} />
+            <EnquiryList rowsCount={6}/>
+            <InvoiceList rowsCount={6}/>
         </div>
     )
 }

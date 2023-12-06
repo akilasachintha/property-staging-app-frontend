@@ -1,8 +1,8 @@
-import React, { createContext, useContext } from 'react';
-import axios, { AxiosInstance } from 'axios';
-import { AuthContextProps, useAuthContext } from 'context/AuthContext';
-import { LoadingContextType, useLoadingContext } from 'context/LoadingContext';
-import { ToastContextType, useToastContext } from 'context/ToastContext';
+import React, {createContext, useContext} from 'react';
+import axios, {AxiosInstance} from 'axios';
+import {AuthContextProps, useAuthContext} from 'context/AuthContext';
+import {LoadingContextType, useLoadingContext} from 'context/LoadingContext';
+import {ToastContextType, useToastContext} from 'context/ToastContext';
 
 const BASE_URL = 'https://localhost:44300/api/v1';
 // const BASE_URL = 'https://property-staging-backend.azurewebsites.net/api/v1';

@@ -25,12 +25,16 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ isMenuOpen, setIsMenuOpen
         {
             label: 'Account Settings',
             icon: <FaUserCircle className="mr-2" />,
-            link: '/account-settings',
+            link: '/profile',
+            onClick: () => setIsDropdownOpen(false), // Add this line
         },
         {
             label: 'Logout',
             icon: <FaPowerOff className="mr-2" />,
-            onClick: handleLogout,
+            onClick: () => {
+                handleLogout();
+                setIsDropdownOpen(false); // Add this line
+            },
         },
     ];
 
@@ -52,7 +56,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({ isMenuOpen, setIsMenuOpen
                             {dropdownItems.map((item, index) => (
                                 <React.Fragment key={index}>
                                     {item.link ? (
-                                        <Link to={item.link} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primaryGold hover:text-white rounded-t-md">
+                                        <Link onClick={item.onClick} to={item.link} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primaryGold hover:text-white rounded-t-md">
                                             {item.icon}
                                             {item.label}
                                         </Link>

@@ -2,14 +2,15 @@ import Breadcrumb from "../../components/baseComponents/BreadCrumb";
 import {Link, useParams} from "react-router-dom";
 import userPhoto from "../../assets/user.png";
 import React, {useEffect} from "react";
-import {MdEmail} from "react-icons/md";
+import {MdEditDocument, MdEmail} from "react-icons/md";
 import {useEnquiryContext} from "../../context/EnquiryContext";
 import {IoInformationCircleOutline} from "react-icons/io5";
-import { MdEditDocument } from "react-icons/md";
+import {useAuthContext} from "../../context/AuthContext";
 
 export default function DashboardInvoiceDetailsPage() {
     const {id} = useParams();
-    const {selectedInvoiceApi, setIsEditInvoice, selectedInvoice, getInvoice, onOpenInvoice} = useEnquiryContext();
+    const {userRole} = useAuthContext();
+    const {selectedInvoiceApi, sendInvoiceEmail, setIsEditInvoice, getInvoice, onOpenInvoice} = useEnquiryContext();
 
     useEffect(() => {
         if (id) {
@@ -36,10 +37,16 @@ export default function DashboardInvoiceDetailsPage() {
                     <h1>
                         <strong>Invoice:</strong> {id}
                     </h1>
-                    <div className="bg-amber-200 hover:bg-yellow-500 px-4 py-2 rounded flex flex-row items-center">
-                        <MdEmail/>
-                        <p className="ml-2">Send Email to Agent</p>
-                    </div>
+                    {
+                        userRole === 'Admin' && (
+                            <button type="button"
+                                    onClick={() => sendInvoiceEmail && sendInvoiceEmail(id || "")}
+                                    className="bg-amber-200 hover:bg-yellow-500 px-4 py-2 rounded flex flex-row items-center">
+                                <MdEmail/>
+                                <p className="ml-2">Send Email to Agent</p>
+                            </button>
+                        )
+                    }
                 </div>
                 <hr className="mt-2"/>
                 <div className="flex flex-col lg:flex-row m-auto gap-4 rounded p-2 md:p-4 justify-center w-full">
@@ -66,8 +73,6 @@ export default function DashboardInvoiceDetailsPage() {
                             <p className="p-2 rounded text-xs">{selectedInvoiceApi && selectedInvoiceApi.propertyAddress}</p>
                             <p className="p-2 rounded text-xs"><strong>Special Notes:</strong></p>
                             <p className="p-2 rounded text-xs">{selectedInvoiceApi && selectedInvoiceApi.specialNotes}</p>
-                            <p className="p-2 rounded text-xs"><strong>Status:</strong></p>
-                            <p className="p-2 rounded text-xs">{selectedInvoiceApi && selectedInvoiceApi.invoiceStatus}</p>
                         </div>
                     </div>
                 </div>
@@ -76,12 +81,15 @@ export default function DashboardInvoiceDetailsPage() {
                 <div>
                     <div className="flex flex-row justify-between items-center">
                         <h1 className="font-bold text-lg">Invoice Details</h1>
-                        <button type="button"
-                                onClick={handleEditInvoice}
-                                className="flex flex-row items-center gap-2 bg-amber-200 hover:bg-yellow-500 px-4 py-2 rounded focus:ring-2 focus:ring-yellow-300 focus:ring-offset-2">
-                            <MdEditDocument />
-                            Edit Details
-                        </button>
+                        {
+                            userRole === 'Admin' && (
+                                <div
+                                    className="bg-amber-200 hover:bg-yellow-500 px-4 py-2 rounded flex flex-row items-center">
+                                    <MdEditDocument/>
+                                    <p className="ml-2" onClick={handleEditInvoice}>Edit Invoice</p>
+                                </div>
+                            )
+                        }
                     </div>
                     <hr className="my-2"/>
                     <div className="grid lg:grid-cols-4 grid-cols-2">
