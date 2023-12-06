@@ -4,8 +4,8 @@ import {AuthContextProps, useAuthContext} from 'context/AuthContext';
 import {LoadingContextType, useLoadingContext} from 'context/LoadingContext';
 import {ToastContextType, useToastContext} from 'context/ToastContext';
 
-const BASE_URL = 'https://localhost:44300/api/v1';
-// const BASE_URL = 'https://property-staging-backend.azurewebsites.net/api/v1';
+// const BASE_URL = 'https://localhost:44300/api/v1';
+const BASE_URL = 'https://property-staging-backend.azurewebsites.net/api/v1';
 
 const createAxiosInstance = (
     authContext: AuthContextProps,
