@@ -14,7 +14,7 @@ const formFields = [
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Invalid email address').required('Required'),
-    password: Yup.string().min(5, 'Must be 8 characters or more').required('Required'),
+    password: Yup.string().required('Required'),
 });
 
 const initialValues = {
